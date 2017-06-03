@@ -2,7 +2,8 @@
   "captured images directory": "./cap",
   "capture interval in sec": 2,
   "face images directory": "./face",
-
+  "model file": "model.json",
+  "use SenseHAT": 1,
   "cascade file": "/home/pi/opencv-3.1.0/data/haarcascades/haarcascade_frontalface_alt.xml"
 
 }
