@@ -51,6 +51,9 @@ def main(imgdir, model_file):
   model.compile(loss="categorical_crossentropy",
                 optimizer=adm,  metrics=['accuracy'])
   model.summary()
+  fp = open(model_file, 'w')
+  fp.write(model.to_json())
+  fp.close()
   plot_model(
     model, to_file="model.png", show_shapes=True, show_layer_names=True)
 
@@ -66,9 +69,6 @@ def main(imgdir, model_file):
     train_gen, steps_per_epoch=200, epochs=2000,
     validation_data=test_gen, validation_steps=20, callbacks=[mc])
 
-  fp = open(model_file, 'w')
-  fp.write(model.to_json())
-  fp.close()
   draw_graph(res)
 
 if __name__ == '__main__':
