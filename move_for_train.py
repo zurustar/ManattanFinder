@@ -1,17 +1,16 @@
-import os
-import sys
-import glob
-import shutil
+import os, sys, glob, shutil, json
 
-def main(srcdir = "./imgs/"):
+def main(srcdir):
   for label in range(2):
-    for subdir in ["test", "train"]:
+    for subdir in ["/test", "/train"]:
       if not os.path.exists(srcdir + subdir):
         os.mkdir(srcdir + subdir)
       if not os.path.exists(srcdir + subdir + "/" + str(label)):
         os.mkdir(srcdir + subdir + "/" + str(label))
     counter = 0
-    for filename in glob.glob(srcdir + str(label) + "/*.jpg"):
+    target_dir = srcdir + "/" + str(label) + "/*.jpg"
+    print("check " + target_dir)
+    for filename in glob.glob(target_dir):
       counter += 1
       if counter == 5:
         counter = 0
@@ -20,5 +19,8 @@ def main(srcdir = "./imgs/"):
         shutil.move(filename, srcdir + "/train/" + str(label) + "/")
 
 if __name__ == '__main__':
-  main(sys.argv[1])
+  f = open(sys.argv[1])
+  conf = json.load(f)
+  f.close()
+  main(conf['face images directory'])
   
