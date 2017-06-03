@@ -31,17 +31,13 @@ def main(srcdir, destdir, cascade_path):
     img = cv2.imread(filename)
     frect = cascade.detectMultiScale(img, minSize=(64, 64))
     pos = []
-    if len(frect) > 0:
-      for r in frect:
-        x, y, w, h = r[0], r[1], r[2], r[3]
-        face = img[y:y+h, x:x+w]
-        if len(face) != 0:
-          if w > 0 and h > 0:
-            filename = destdir + "/" + prefix + str(counter) + ".jpg"
-            cv2.imwrite(filename, face)
-            print("save " + filename)
-            counter += 1
-            pos.append(r)
+    for r in frect:
+      face = img[r[1]:r[1]+r[3], r[0]:r[0]+r[2]]
+      filename = destdir + "/" + prefix + str(counter) + ".jpg"
+      cv2.imwrite(filename, face)
+      print("save " + filename)
+      counter += 1
+      pos.append(r)
     for p in pos:
       cv2.rectangle(img, (p[0],p[1]),(p[0]+p[2],p[1]+p[3]),(0,0,255), 8)
     if len(pos) > 0:
