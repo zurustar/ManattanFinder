@@ -1,4 +1,6 @@
+import sys
 import glob
+import json
 import numpy as np
 import tensorflow.contrib.keras as keras
 from keras.models import Sequential
@@ -23,7 +25,7 @@ def draw_graph(res):
   plt.savefig('./graph.png')
   plt.close('all')
 
-def main():
+def main(imgdir, model_file):
   width = 32
   height = 32
   input_shape=(width, height, 1)
@@ -54,9 +56,9 @@ def main():
 
   idg = ImageDataGenerator(rotation_range=30., zoom_range=0.1, rescale=1./255)
   train_gen = idg.flow_from_directory(
-    'imgs/train', color_mode='grayscale', target_size=(width, height))
+    imgdir + '/train', color_mode='grayscale', target_size=(width, height))
   test_gen = idg.flow_from_directory(
-    'imgs/test', color_mode='grayscale', target_size=(width, height))
+    imgdir + '/test', color_mode='grayscale', target_size=(width, height))
   mc = ModelCheckpoint(
     "./weights.{epoch:02d}-{val_loss:.2f}.hdf5", save_best_only=True)
 
@@ -64,10 +66,14 @@ def main():
     train_gen, steps_per_epoch=200, epochs=2000,
     validation_data=test_gen, validation_steps=20, callbacks=[mc])
 
-  fp = open('./model.json', 'w')
+  fp = open(model_file, 'w')
   fp.write(model.to_json())
   fp.close()
   draw_graph(res)
 
 if __name__ == '__main__':
-  main()
+  f = open(sys.argv[1])
+  conf = json.load(f)
+  f.close()
+  main(conf['face images directory'], conf['model file'])
+
