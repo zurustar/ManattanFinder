@@ -1,8 +1,4 @@
-import glob
-import cv2
-import os
-import sys
-import imghdr
+import glob, cv2, os, sys, imghdr, json
 from datetime import datetime
 
 def move(src, targetdir, filename):
@@ -38,4 +34,8 @@ def main(srcdir):
   cv2.destroyWindow(name)
 
 if __name__ == '__main__':
-  main(sys.argv[1])
+  f = open(sys.argv[1])
+  conf = json.load(f)
+  f.close()
+  main(conf['face images directory'])
+

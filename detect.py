@@ -1,11 +1,15 @@
+import sys
 import cv2
+import json
 import tensorflow.contrib.keras as keras
 from keras.models import model_from_json
-from sense_hat import SenseHat
 
-def main(cascade_path='/home/pi/opencv-3.1.0/data/haarcascades/haarcascade_frontalface_alt.xml'):
-  sense = SenseHat()
-  fp = open('./model.json', 'r')
+def main(model_file, cascade_path, use_sensehat):
+  sense = None
+  if use_sensehat:
+    from sense_hat import SenseHat
+    sense = SenseHat()
+  fp = open(model_file, 'r')
   buf = fp.read()
   fp.close()
   print(buf)
@@ -27,29 +31,32 @@ def main(cascade_path='/home/pi/opencv-3.1.0/data/haarcascades/haarcascade_front
       for r in frect:
         x, y, w, h = r[0], r[1], r[2], r[3]
         face = frame[y:y+h, x:x+w]
-        if len(face) != 0:
-          if w > 0 and h > 0:
-            face = cv2.resize(face, (32, 32))
-            face = cv2.cvtColor(face, cv2.COLOR_RGB2GRAY)
-            face = face.reshape(1,32, 32, 1) / 255.
-            score = model.predict_on_batch(face)
-            print(score)
-            color = (255, 0, 0)
-            width = 2 
-            if score[0][1] > 0.5:
-              color = (0, 0, 255)
-              width = 8
-              found = True
-            cv2.rectangle(frame, (x,y),(x+w,y+h), color, width)
+        face = cv2.resize(face, (32, 32))
+        face = cv2.cvtColor(face, cv2.COLOR_RGB2GRAY)
+        face = face.reshape(1,32, 32, 1) / 255.
+        score = model.predict_on_batch(face)
+        print(score)
+        color = (255, 0, 0)
+        width = 2 
+        if score[0][1] > 0.5:
+          color = (0, 0, 255)
+          width = 8
+          found = True
+        cv2.rectangle(frame, (x,y),(x+w,y+h), color, width)
     cv2.imshow(winname, frame)
-    if found:
-      sense.show_message("manattan", scroll_speed=0.01)
-    else:
-      sense.clear()
+    if use_sensehat:
+      if found:
+        sense.show_message("manattan", scroll_speed=0.01)
+      else:
+        sense.clear()
     if cv2.waitKey(1) & 0xFF == ord('q'):
       break
   cap.release()
   cv2.destroyWindow(winname)
 
 if __name__ == '__main__':
-  main()
+  f = open(sys.argv[1])
+  conf = json.load(f)
+  f.close()
+  main(conf['model file'], conf['cascade file'], conf['use SenseHAT'])
+

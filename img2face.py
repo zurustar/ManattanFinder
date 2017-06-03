@@ -1,11 +1,4 @@
-import cv2
-import glob
-import sys
-import os
-import imghdr
-import datetime
-import time
-import json
+import cv2, glob, sys, os, imghdr, datetime, time, json
 
 def main(srcdir, destdir, cascade_path):
 

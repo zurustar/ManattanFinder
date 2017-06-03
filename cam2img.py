@@ -1,8 +1,4 @@
-import os
-import sys
-import cv2
-import time
-import json
+import os, sys, cv2, time, json
 from datetime import datetime, timedelta
 
 def main(destdir, interval_in_sec):
