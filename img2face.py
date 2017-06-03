@@ -5,8 +5,9 @@ import os
 import imghdr
 import datetime
 import time
+import json
 
-def main(srcdir, destdir, cascade_path='/home/pi/opencv-3.1.0/data/haarcascades/haarcascade_frontalface_alt.xml'):
+def main(srcdir, destdir, cascade_path):
 
   winname = 'searching..'
   cv2.namedWindow(winname, cv2.WINDOW_AUTOSIZE)
@@ -50,5 +51,10 @@ def main(srcdir, destdir, cascade_path='/home/pi/opencv-3.1.0/data/haarcascades/
   cv2.destroyWindow(winname)
 
 if __name__ == '__main__':
-  main(sys.argv[1], sys.argv[2])
-  
+  f = open(sys.argv[1])
+  conf = json.load(f)
+  f.close()
+  main(conf['captured images directory'],
+       conf['face images directory'],
+       conf['cascade file'])
+

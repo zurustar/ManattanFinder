@@ -2,9 +2,10 @@ import os
 import sys
 import cv2
 import time
+import json
 from datetime import datetime, timedelta
 
-def main(destdir):
+def main(destdir, interval_in_sec):
   winname = "camera view"
   cv2.namedWindow(winname, cv2.WINDOW_AUTOSIZE)
   cap = cv2.VideoCapture(0)
@@ -20,7 +21,7 @@ def main(destdir):
     if ret == False:
       break
     cv2.imshow(winname, frame)
-    if datetime.now() - lastupdate > timedelta(seconds=2):
+    if datetime.now() - lastupdate > timedelta(seconds=interval_in_sec):
       filename = destdir + "/" + prefix + str(counter) + ".jpg"
       cv2.imwrite(filename, frame)
       print(filename)
@@ -32,4 +33,8 @@ def main(destdir):
   cv2.destroyWindow(winname)
 
 if __name__ == '__main__':
-  main(sys.argv[1])
+  f = open(sys.argv[1])
+  conf = json.load(f)
+  f.close()
+  main(conf['captured images directory'], conf['capture interval in sec'])
+
