@@ -25,7 +25,7 @@ def draw_graph(res):
   plt.savefig('./graph.png')
   plt.close('all')
 
-def main(imgdir, model_file):
+def main(imgdir, model_file, weight_file):
   width = 32
   height = 32
   input_shape=(width, height, 1)
@@ -62,8 +62,7 @@ def main(imgdir, model_file):
     imgdir + '/train', color_mode='grayscale', target_size=(width, height))
   test_gen = idg.flow_from_directory(
     imgdir + '/test', color_mode='grayscale', target_size=(width, height))
-  mc = ModelCheckpoint(
-    "./weights.{epoch:02d}-{val_loss:.2f}.hdf5", save_best_only=True)
+  mc = ModelCheckpoint(weight_file, save_best_only=True)
 
   res = model.fit_generator(
     train_gen, steps_per_epoch=200, epochs=2000,
@@ -75,5 +74,5 @@ if __name__ == '__main__':
   f = open(sys.argv[1])
   conf = json.load(f)
   f.close()
-  main(conf['face images directory'], conf['model file'])
+  main(conf['face images directory'], conf['model file'], conf['weight file'])
 

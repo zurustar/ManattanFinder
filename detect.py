@@ -4,7 +4,7 @@ import json
 import tensorflow.contrib.keras as keras
 from keras.models import model_from_json
 
-def main(model_file, cascade_path, use_sensehat):
+def main(model_file, weight_file, cascade_path, use_sensehat):
   sense = None
   if use_sensehat:
     from sense_hat import SenseHat
@@ -14,7 +14,7 @@ def main(model_file, cascade_path, use_sensehat):
   fp.close()
   print(buf)
   model = model_from_json(buf)
-  model.load_weights('./weights.hdf5')
+  model.load_weights(weight_file)
   cascade = cv2.CascadeClassifier(cascade_path)
   winname = "camera"
   cv2.namedWindow(winname, cv2.WINDOW_AUTOSIZE)
@@ -58,5 +58,6 @@ if __name__ == '__main__':
   f = open(sys.argv[1])
   conf = json.load(f)
   f.close()
-  main(conf['model file'], conf['cascade file'], conf['use SenseHAT'])
+  main(conf['model file'], conf['weight file'],
+       conf['cascade file'], conf['use SenseHAT'])
 
